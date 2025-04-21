@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Proyectos de Inversión</title>
+    <link rel="stylesheet" href="...">
+</head>
+<body>
+    <h1>Proyectos de Inversión</h1>
+    <ul>
+        {% for proyecto in proyectos %}
+        <li>
+            <a href="{% url 'detalle_proyecto' proyecto.id %}">{{ proyecto.nombre }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Detalles del Predio</h1>
+<p><strong>ID:</strong> {{ predio.id }}</p>
+<p><strong>Ubicación:</strong> {{ predio.ubicacion }}</p>
+
+<h2>Ciudadanos en este predio</h2>
+<ul>
+    {% for ciudadano in ciudadanos %}
+        <li>{{ ciudadano.nombre }}, {{ ciudadano.edad }} años, ingresos: {{ ciudadano.ingresos_anuales }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

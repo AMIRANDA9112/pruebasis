@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualizador de Indicadores Cali</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Plotly.js -->
+  <<script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold mb-4">Visualizador de Indicadores Cali</h1>
+
+    <!-- Sección Conjuntos -->
+    <section id="conjuntos-section">
+      <h2 class="text-2xl font-semibold mb-2">Conjuntos</h2>
+      <div id="conjuntos-list" class="flex flex-wrap gap-4"></div>
+    </section>
+
+    <!-- Sección Dimensiones -->
+    <section id="dimensiones-section" class="mt-6 hidden">
+      <h2 class="text-2xl font-semibold mb-2">Dimensiones</h2>
+      <div id="dimensiones-list" class="flex flex-wrap gap-4"></div>
+    </section>
+
+    <!-- Sección Temáticas -->
+    <section id="tematicas-section" class="mt-6 hidden">
+      <h2 class="text-2xl font-semibold mb-2">Temáticas</h2>
+      <div id="tematicas-list" class="flex flex-wrap gap-4"></div>
+    </section>
+
+    <!-- Sección Indicadores -->
+    <section id="indicadores-section" class="mt-6 hidden">
+      <h2 class="text-2xl font-semibold mb-2">Indicadores</h2>
+      <div id="indicadores-list" class="flex flex-wrap gap-4"></div>
+    </section>
+
+    <!-- Sección para el Gráfico -->
+    <section id="grafico-section" class="mt-6 hidden">
+      <h2 class="text-2xl font-semibold mb-2">Visualizador</h2>
+      <div id="grafico-container"></div>
+    </section>
+  </div>
+
+  <script>
+    // Función genérica para hacer peticiones fetch con manejo de errores
+    function fetchData(url, callback) {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) {
+            console.error(`Error en la respuesta. Status: ${response.status} - ${response.statusText}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => callback(data))
+        .catch(error => console.error('Error al obtener datos:', error));
+    }
+
+    // Cargar Conjuntos al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchData('/conjuntos_json/', function(data) {
+        const conjuntosList = document.getElementById('conjuntos-list');
+        data.forEach(conjunto => {
+          const btn = document.createElement('button');
+          btn.textContent = conjunto.nombre;
+          btn.classList.add('bg-blue-500', 'text-white', 'px-4', 'py-2', 'rounded');
+          btn.addEventListener('click', function() {
+            document.getElementById('dimensiones-section').classList.remove('hidden');
+            document.getElementById('dimensiones-list').innerHTML = '';
+            document.getElementById('tematicas-section').classList.add('hidden');
+            document.getElementById('indicadores-section').classList.add('hidden');
+            document.getElementById('grafico-section').classList.add('hidden');
+            fetchData(`/dimensiones_json/${conjunto.id}/`, function(dimensiones) {
+              dimensiones.forEach(dimension => {
+                const btnDim = document.createElement('button');
+                btnDim.textContent = dimension.nombre;
+                btnDim.classList.add('bg-green-500', 'text-white', 'px-4', 'py-2', 'rounded');
+                btnDim.addEventListener('click', function() {
+                  document.getElementById('tematicas-section').classList.remove('hidden');
+                  document.getElementById('tematicas-list').innerHTML = '';
+                  document.getElementById('indicadores-section').classList.add('hidden');
+                  document.getElementById('grafico-section').classList.add('hidden');
+                  fetchData(`/tematicas_json/${dimension.id}/`, function(tematicas) {
+                    tematicas.forEach(tematica => {
+                      const btnTema = document.createElement('button');
+                      btnTema.textContent = tematica.nombre;
+                      btnTema.classList.add('bg-yellow-500', 'text-white', 'px-4', 'py-2', 'rounded');
+                      btnTema.addEventListener('click', function() {
+                        document.getElementById('indicadores-section').classList.remove('hidden');
+                        document.getElementById('indicadores-list').innerHTML = '';
+                        document.getElementById('grafico-section').classList.add('hidden');
+                        fetchData(`/indicadores_json/${tematica.id}/`, function(indicadores) {
+                          indicadores.forEach(indicador => {
+                            const btnInd = document.createElement('button');
+                            btnInd.textContent = indicador.nombre;
+                            btnInd.classList.add('bg-purple-500', 'text-white', 'px-4', 'py-2', 'rounded');
+                            btnInd.addEventListener('click', function() {
+                              document.getElementById('grafico-section').classList.remove('hidden');
+                              fetchData(`/datos_json/${indicador.id}/?fecha_inicio=2020-01-01&fecha_fin=2023-01-01`, function(result) {
+                                const contenedorGrafico = document.getElementById('grafico-container');
+                                if (result.fig) {
+                                  Plotly.newPlot('grafico-container', result.fig.data, result.fig.layout);
+                                } else if (result.mensaje) {
+                                  contenedorGrafico.innerHTML = `<p>${result.mensaje}</p>`;
+                                } else {
+                                  contenedorGrafico.innerHTML = `<p>Error al cargar datos.</p>`;
+                                }
+                              });
+                            });
+                            document.getElementById('indicadores-list').appendChild(btnInd);
+                          });
+                        });
+                      });
+                      document.getElementById('tematicas-list').appendChild(btnTema);
+                    });
+                  });
+                });
+                document.getElementById('dimensiones-list').appendChild(btnDim);
+              });
+            });
+          });
+          conjuntosList.appendChild(btn);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

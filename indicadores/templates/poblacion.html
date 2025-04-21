@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <div class="breadcrumb mb-6">
+        <a href="{% url 'home' %}" class="text-blue-600 hover:underline">Inicio</a> / 
+        <a href="{% url 'temas' %}" class="text-blue-600 hover:underline">Temas</a> / 
+        Demografía y Población
+    </div>
+
+    <!-- Encabezado con gradiente -->
+    <div class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg shadow-lg mb-8">
+        <div class="container mx-auto px-6 py-8 text-white">
+            <div class="flex items-center">
+                <div class="bg-white rounded-full p-3 mr-4">
+                    <img src="{% static 'demografia-icono.png' %}" alt="Demografía" class="h-10 w-10" onerror="this.src='https://via.placeholder.com/40?text=D'">
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold">Población de Cali</h1>
+                    <p class="text-primary-100 mt-2">Estadísticas demográficas históricas de la ciudad</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 gap-8">
+        <!-- Gráficos principales -->
+        {% if error_message %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md">
+                <div class="flex">
+                    <div class="py-1 mr-3">
+                        <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="font-bold">Error</p>
+                        <p>{{ error_message }}</p>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Gráfico de evolución poblacional -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-primary-800">Evolución Poblacional</h2>
+                        <p class="text-gray-600">Crecimiento de la población a través de los años</p>
+                    </div>
+                    <button id="download-evolucion" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                        Descargar datos
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="evolucion-chart" class="w-full h-[600px]"></div>
+                </div>
+            </div>
+
+            <!-- Gráfico de población por sexo -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-primary-800">Población Total por Sexo</h2>
+                        <p class="text-gray-600">Distribución de hombres y mujeres a través de los años</p>
+                    </div>
+                    <button id="download-sexo" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                        Descargar datos
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="poblacion-sexo-chart" class="w-full h-[600px]"></div>
+                </div>
+            </div>
+
+            <!-- Pirámide poblacional -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-semibold text-primary-800">Pirámide Poblacional</h2>
+                        <p class="text-gray-600">Distribución por edades y género</p>
+                    </div>
+                    <button id="download-piramide" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                        Descargar datos
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="piramide-chart" class="w-full h-[600px]"></div>
+                </div>
+            </div>
+
+            <!-- Gráficos de edades y tasa -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Gráfico de edad mediana -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-primary-800">Edad Mediana de la Población</h2>
+                            <p class="text-gray-600">Evolución de la edad mediana a lo largo del tiempo</p>
+                        </div>
+                        <button id="download-edad-mediana" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                            Descargar datos
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="edad-mediana-chart" class="w-full h-[600px]"></div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de relación hombre-mujer -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-primary-800">Relación Hombre-Mujer</h2>
+                            <p class="text-gray-600">Proporción de hombres por cada 100 mujeres</p>
+                        </div>
+                        <button id="download-relacion-hm" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                            Descargar datos
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="relacion-hm-chart" class="w-full h-[600px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos de líneas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Gráfico de índice de envejecimiento -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-primary-800">Índice de Envejecimiento</h2>
+                            <p class="text-gray-600">Personas mayores de 65 años por cada 100 menores de 15 años</p>
+                        </div>
+                        <button id="download-indice-envejecimiento" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                            Descargar datos
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="indice-envejecimiento-chart" class="w-full h-[600px]"></div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de dependencia total -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gradient-to-r from-primary-50 to-white p-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-semibold text-primary-800">Dependencia Total</h2>
+                            <p class="text-gray-600">Porcentaje de población dependiente</p>
+                        </div>
+                        <button id="download-dependencia-total" class="bg-primary-500 hover:bg-primary-600 text-white font-semibold py-2 px-4 rounded">
+                            Descargar datos
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div id="dependencia-total-chart" class="w-full h-[600px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información adicional -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-primary-800 mb-4">Acerca de estos datos</h3>
+                    <p class="text-gray-700 mb-4">Los datos presentados corresponden a la población total de Cali a través de los años, según el indicador SIS_4_T3_I1.</p>
+                    <p class="text-gray-700">Esta información es recopilada por el Departamento Administrativo Nacional de Estadística (DANE) mediante censos y proyecciones poblacionales.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-primary-800 mb-4">Metodología</h3>
+                    <p class="text-gray-700 mb-4">La metodología utilizada para estas estimaciones incluye:</p>
+                    <ul class="list-disc pl-5 text-gray-700 space-y-2">
+                        <li>Censos de población</li>
+                        <li>Proyecciones estadísticas</li>
+                        <li>Ajustes por dinámica demográfica</li>
+                        <li>Consideración de migración interna y externa</li>
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Scripts para renderizar los gráficos -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // Función para descargar datos en formato CSV
+        function downloadCSV(data, filename) {
+            const csvContent = data.map(row => row.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        // Función para obtener los datos de un gráfico
+        function getChartData(chartId) {
+            // Obtener el elemento del gráfico
+            const chart = document.getElementById(chartId);
+            if (!chart) {
+                console.error(`No se encontró el gráfico con ID: ${chartId}`);
+                return [];
+            }
+
+            // Obtener los datos del gráfico usando la API de Plotly
+            const plotlyData = window.Plotly.d3.select(`#${chartId}`).datum();
+            
+            // Verificar si los datos están disponibles
+            if (!plotlyData || !plotlyData.data) {
+                console.error(`No se encontraron datos para el gráfico: ${chartId}`);
+                return [];
+            }
+            
+            // Obtener los datos de todas las trazas
+            const traces = plotlyData.data;
+            
+            // Crear encabezados
+            let headers = [];
+            if (chartId === 'piramide-chart') {
+                // Para la pirámide, los encabezados son diferentes
+                headers = ['Grupo de Edad', 'Hombres', 'Mujeres'];
+            } else {
+                // Para otros gráficos, usar el formato estándar
+                headers = ['Año'];
+                traces.forEach(trace => {
+                    headers.push(trace.name || trace.text || trace.yaxis || 'Serie');
+                });
+            }
+            
+            // Crear filas de datos
+            let rows = [headers];
+            
+            if (chartId === 'piramide-chart') {
+                // Para la pirámide, los datos están estructurados de manera diferente
+                const grupos_edad = traces[0].x;
+                if (!grupos_edad) {
+                    console.error(`No se encontraron grupos de edad en el gráfico: ${chartId}`);
+                    return [];
+                }
+                
+                // Obtener los valores de hombres y mujeres
+                const hombres = traces[0].y;
+                const mujeres = traces[1].y;
+                
+                grupos_edad.forEach((edad, index) => {
+                    const row = [
+                        edad,
+                        hombres[index] || 0,
+                        mujeres[index] || 0
+                    ];
+                    rows.push(row);
+                });
+            } else {
+                // Para otros gráficos, usar el formato estándar
+                const years = traces[0].x;
+                if (!years) {
+                    console.error(`No se encontraron años en el gráfico: ${chartId}`);
+                    return [];
+                }
+                
+                // Crear un objeto para mapear los años a sus índices
+                const yearIndexMap = {};
+                years.forEach((year, index) => {
+                    yearIndexMap[year] = index;
+                });
+                
+                // Ordenar los años para asegurar un orden consistente
+                const sortedYears = years.sort((a, b) => a - b);
+                
+                sortedYears.forEach((year) => {
+                    const row = [year];
+                    traces.forEach(trace => {
+                        const index = yearIndexMap[year];
+                        const value = trace.y ? trace.y[index] : null;
+                        row.push(value !== null ? value : '');
+                    });
+                    rows.push(row);
+                });
+            }
+            
+            return rows;
+        }
+
+        // Función para configurar los event listeners de descarga
+        function setupDownloadListeners() {
+            // Event listeners para los botones de descarga
+            document.getElementById('download-evolucion').addEventListener('click', () => {
+                const data = getChartData('evolucion-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'evolucion_poblacional.csv');
+                }
+            });
+
+            document.getElementById('download-sexo').addEventListener('click', () => {
+                const data = getChartData('poblacion-sexo-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'poblacion_por_sexo.csv');
+                }
+            });
+
+            document.getElementById('download-piramide').addEventListener('click', () => {
+                const data = getChartData('piramide-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'piramide_poblacional.csv');
+                }
+            });
+
+            document.getElementById('download-edad-mediana').addEventListener('click', () => {
+                const data = getChartData('edad-mediana-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'edad_mediana.csv');
+                }
+            });
+
+            document.getElementById('download-relacion-hm').addEventListener('click', () => {
+                const data = getChartData('relacion-hm-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'relacion_hombre_mujer.csv');
+                }
+            });
+
+            document.getElementById('download-indice-envejecimiento').addEventListener('click', () => {
+                const data = getChartData('indice-envejecimiento-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'indice_envejecimiento.csv');
+                }
+            });
+
+            document.getElementById('download-dependencia-total').addEventListener('click', () => {
+                const data = getChartData('dependencia-total-chart');
+                if (data.length > 0) {
+                    downloadCSV(data, 'dependencia_total.csv');
+                }
+            });
+        }
+
+        // Renderizar el gráfico de evolución poblacional
+        const evolucionDiv = document.getElementById('evolucion-chart');
+        if (evolucionDiv && '{{ chart_json_barras|safe }}') {
+            const chartData = {{ chart_json_barras|safe }};
+            Plotly.newPlot(evolucionDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar la pirámide poblacional
+        const piramideDiv = document.getElementById('piramide-chart');
+        if (piramideDiv && '{{ chart_json_piramide|safe }}') {
+            const chartData = {{ chart_json_piramide|safe }};
+            Plotly.newPlot(piramideDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de población por sexo
+        const poblacionSexoDiv = document.getElementById('poblacion-sexo-chart');
+        if (poblacionSexoDiv && '{{ chart_json_poblacion_sexo|safe }}') {
+            const chartData = {{ chart_json_poblacion_sexo|safe }};
+            Plotly.newPlot(poblacionSexoDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de población por edades
+        const edadesDiv = document.getElementById('edades-chart');
+        if (edadesDiv && '{{ chart_json_edades|safe }}') {
+            const chartData = {{ chart_json_edades|safe }};
+            Plotly.newPlot(edadesDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de tasa de crecimiento
+        const tasaDiv = document.getElementById('tasa-chart');
+        if (tasaDiv && '{{ chart_json_tasa|safe }}') {
+            const chartData = {{ chart_json_tasa|safe }};
+            Plotly.newPlot(tasaDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de comunas
+        const comunasDiv = document.getElementById('comunas-chart');
+        if (comunasDiv && '{{ chart_json_comunas|safe }}') {
+            const chartData = {{ chart_json_comunas|safe }};
+            Plotly.newPlot(comunasDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de ciudades
+        const ciudadesDiv = document.getElementById('ciudades-chart');
+        if (ciudadesDiv && '{{ chart_json_ciudades|safe }}') {
+            const chartData = {{ chart_json_ciudades|safe }};
+            Plotly.newPlot(ciudadesDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de edad mediana
+        const edadMedianaDiv = document.getElementById('edad-mediana-chart');
+        if (edadMedianaDiv && '{{ chart_json_edad_mediana|safe }}') {
+            const chartData = {{ chart_json_edad_mediana|safe }};
+            Plotly.newPlot(edadMedianaDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de relación hombre-mujer
+        const relacionHMDiv = document.getElementById('relacion-hm-chart');
+        if (relacionHMDiv && '{{ chart_json_relacion_hm|safe }}') {
+            const chartData = {{ chart_json_relacion_hm|safe }};
+            Plotly.newPlot(relacionHMDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de índice de envejecimiento
+        const envejecimientoDiv = document.getElementById('indice-envejecimiento-chart');
+        if (envejecimientoDiv && '{{ chart_json_indice_envejecimiento|safe }}') {
+            const chartData = {{ chart_json_indice_envejecimiento|safe }};
+            Plotly.newPlot(envejecimientoDiv, chartData.data, chartData.layout);
+        }
+
+        // Renderizar el gráfico de dependencia total
+        const dependenciaDiv = document.getElementById('dependencia-total-chart');
+        if (dependenciaDiv && '{{ chart_json_dependencia_total|safe }}') {
+            const chartData = {{ chart_json_dependencia_total|safe }};
+            Plotly.newPlot(dependenciaDiv, chartData.data, chartData.layout);
+        }
+
+        // Configurar los event listeners después de que todos los gráficos estén renderizados
+        setupDownloadListeners();
+    </script>
+{% endblock %}

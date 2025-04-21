@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+    <div class="breadcrumb mb-6">
+        <a href="{% url 'home' %}" class="text-blue-600 hover:underline">Inicio</a> / Temas
+    </div>
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Temas Estadísticos</h1>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="category bg-white rounded-lg shadow-md p-6 h-full">
+            <h2 class="flex items-center justify-center gap-2 text-xl font-semibold mb-4">
+                <img src="{% static 'demografia-icono.png' %}" alt="Demografía y Sociedad" class="mx-auto mb-4 h-20">
+                Demografía y Sociedad
+            </h2>
+            <ul class="list-none p-0">
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Educación, Ciencia, Tecnología e Innovación</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Empleo y ocupación</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Deporte y recreación</a></li>
+                <li class="mb-2"><a href="{% url 'poblacion' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Demografía y población</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Salud y seguridad social</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Nivel, calidad y condiciones de vida</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Tecnologías de la Información y Comunicaciones</a></li>
+            </ul>
+        </div>
+        <div class="category bg-white rounded-lg shadow-md p-6 h-full">
+
+            <h2 class="flex items-center justify-center gap-2 text-xl font-semibold mb-4">
+                <img src="{% static 'economia-icono.png' %}" alt="Economía y Sectores Productivos" class="mx-auto mb-4 h-20">
+                Economía y Sectores Productivos
+            </h2>
+            <ul class="list-none p-0">
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Agricultura, ganadería y pesca</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Comercio</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Construcción</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Cuentas económicas distritales</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Finanzas públicas y estadísticas fiscales</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Índices de precios y costos</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Industria</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Transporte</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Turismo</a></li>
+            </ul>
+        </div>
+        <div class="category bg-white rounded-lg shadow-md p-6 h-full">
+
+            <h2 class="flex items-center justify-center gap-2 text-xl font-semibold mb-4">
+                <img src="{% static 'geografia-icono.png' %}" alt="Geográfica, Medio Ambiente, Ordenamiento Territorial" class="mx-auto mb-4 h-20">
+                Geográfica, Medio Ambiente, Ordenamiento Territorial
+            </h2>
+            <ul class="list-none p-0">
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Asentamientos humanos y salud ambiental</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Condiciones y calidad ambiental</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Protección ambiental, gestión y participación / acción ciudadana</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Ordenamiento territorial</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Estadísticas territoriales</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Cartografía Urbana y Rural (CUR)</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Aprovechamiento de catastro multipropósito</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Servicios públicos domiciliarios</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Recursos ambientales y su uso</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Eventos extremos y desastres</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Residuos</a></li>
+            </ul>
+        </div>
+        <div class="category bg-white rounded-lg shadow-md p-6 h-full">
+
+            <h2 class="flex items-center justify-center gap-2 text-xl font-semibold mb-4">
+                <img src="{% static 'gobierno-icono.png' %}" alt="Gobierno, Seguridad y Justicia" class="mx-auto mb-4 h-20">
+                Gobierno, Seguridad y Justicia
+            </h2>
+            <ul class="list-none p-0">
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Gobierno</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Seguridad pública</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Justicia</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Administración pública</a></li>
+                <li class="mb-2"><a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md">Actividad política y asociativa</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
